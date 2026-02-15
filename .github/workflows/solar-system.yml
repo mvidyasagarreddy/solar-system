@@ -45,9 +45,9 @@ jobs:
           if: always()
           uses: actions/upload-artifact@v6
           with:
-            name: Mocha-Test-Result
+            name: Mocha-Test-Result-${{ matrix.nodejsversion }}-${{ matrix.operating-system }}
             path: test-results.xml
-            retention-days: 0
+            retention-days: 1
     code-coverage:
       name: Code Coverage
       needs: unit-testing
@@ -74,4 +74,4 @@ jobs:
         with:
           name: Code-Coverage-Result
           path: coverage
-          retention-days: 0
+          retention-days: 1
