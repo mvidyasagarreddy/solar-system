@@ -51,7 +51,14 @@ jobs:
     code-coverage:
       name: Code Coverage
       needs: unit-testing
-      runs-on: ubuntu-latest
+      strategy:
+          matrix:
+            nodejsversion: [18,20]
+            operating-system: [ubuntu-latest, macos-latest]
+            exclude:
+              - nodejsversion: 18
+                operating-system: macos-latest
+      runs-on: ${{ matrix.operating-system }}
       continue-on-error: true
       steps:
       - name: Checkout Repository
@@ -60,7 +67,7 @@ jobs:
       - name: Setup NodeJS Version
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.nodejsversion }}
 
       - name: Install Dependencies
         run: npm install
@@ -72,6 +79,6 @@ jobs:
       - name: Upload Code Coverage Report
         uses: actions/upload-artifact@v6
         with:
-          name: Code-Coverage-Result
+          name: Code-Coverage-Result-${{ matrix.nodejsversion }}-${{ matrix.operating-system }}
           path: coverage
           retention-days: 1
