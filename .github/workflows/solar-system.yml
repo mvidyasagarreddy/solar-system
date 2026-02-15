@@ -88,3 +88,17 @@ jobs:
           name: Code-Coverage-Result-${{ matrix.nodejsversion }}-${{ matrix.operating-system }}
           path: coverage
           retention-days: 1
+
+    docker:
+      name: Containerization
+      runs-on: ubuntu-latest
+      needs: [unit-testing, code-coverage]
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Dockerhub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
