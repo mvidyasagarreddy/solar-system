@@ -27,10 +27,11 @@ jobs:
         strategy:
           matrix:
             nodejsversion: [18,20]
-            operating-system: [ubuntu-latest, macos-latest]
-            exclude:
-              - nodejsversion: [18,20]
-                operating-system: macos-latest
+            # operating-system: [ubuntu-latest, macos-latest]
+            operating-system: [ubuntu-latest]
+            # exclude:
+            #   - nodejsversion: [18,20]
+            #     operating-system: macos-latest
         runs-on: ${{ matrix.operating-system }}
         steps:
         - name: Checkout Repository
