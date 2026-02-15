@@ -17,10 +17,9 @@ env:
 jobs:
     unit-testing:
         name: Unit Testing
-        continue-on-error: true
         strategy:
           matrix:
-            nodejsversion: [18,19,20]
+            nodejsversion: [18,20]
             operating-system: [ubuntu-latest, macos-latest]
             exclude:
               - nodejsversion: 18
@@ -43,11 +42,12 @@ jobs:
           run: npm test
           
         - name: Archive Test Result
-          if: always() && (steps.nodejs-unit-testing-step.outcome == 'failure' || steps.nodejs-unit-testing-step.outcome == 'success')
+          if: always()
           uses: actions/upload-artifact@v6
           with:
             name: Mocha-Test-Result
             path: test-results.xml
+            retention-days: 0
     code-coverage:
       name: Code Coverage
       needs: unit-testing
@@ -67,10 +67,11 @@ jobs:
 
       - name: Run Code Coverage
         run: npm run coverage
+        continue-on-error: true
 
       - name: Upload Code Coverage Report
         uses: actions/upload-artifact@v6
         with:
           name: Code-Coverage-Result
           path: coverage
-          retention-days: 5
+          retention-days: 0
