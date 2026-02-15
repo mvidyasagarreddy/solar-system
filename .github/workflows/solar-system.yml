@@ -11,8 +11,6 @@ env:
     MONGO_URI: mongodb+srv://${{ vars.MONGO_USERNAME }}:${{ secrets.MONGO_PASSWORD }}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority
     MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
     MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-    
-
   
 jobs:
     unit-testing:
@@ -54,6 +52,7 @@ jobs:
             name: Mocha-Test-Result-${{ matrix.nodejsversion }}-${{ matrix.operating-system }}
             path: test-results.xml
             retention-days: 1
+
     code-coverage:
       name: Code Coverage
       needs: unit-testing
@@ -102,3 +101,26 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker build for testing
+        uses: docker/build-push-action@v4
+        with:
+          context:
+          push: false
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/solar-system:testing:${{ github.sha }}
+
+      - name: Docker image testing
+        run: |
+          docker run --name solar-system-app -d \
+            -p 3000:3000 \
+            -e MONGO_URI="${{ env.MONGO_URI }}" \ 
+            -e MONGO_USERNAME="${{ env.MONGO_USERNAME }}" \
+            -e MONGO_PASSWORD="${{ env.MONGO_PASSWORD }}" \
+            ${{ env.DOCKERHUB_USERNAME }}/solar-system:testing:${{ github.sha }}
+
+          export IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' solar-system-app)
+          echo "Container IP: $IP"
+
+          echo "Testing image url using wget"
+          wget -q -O - 127.0.0.1:3000/live || grep live
+      
