@@ -8,15 +8,23 @@ on:
       - 'feature/*'
 
 env:
+    MONGO_URI: 'mongodb+srv:/${{ vars.MONGO_USERNAME }}:${{ secrets.MONGO_PASSWORD }}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority'
     MONGO_USRNAME: ${{ vars.MONGO_USERNAME }}
     MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-    MONGO_URI: 'mongodb+srv:/${{ vars.MONGO_USERNAME }}:${{ secrets.MONGO_PASSWORD }}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority'
+    
 
   
 jobs:
     unit-testing:
         name: Unit Testing
-        runs-on: ubuntu-latest
+        strategy:
+          matrix:
+            nodejsversion: [18,19,20]
+            operating-system: [ubuntu-latest, macos-latest]
+            exclude:
+              - nodejsversion: 18
+                operating-system: macos-latest
+        runs-on: ${{ matrix.operating-system }}
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
@@ -24,7 +32,7 @@ jobs:
         - name: Setup NodeJS Version
           uses: actions/setup-node@v3
           with:
-            node-version: 20
+            node-version: ${{ matrix.nodejsversion }}
     
         - name: Install Dependencies
           run: npm install
