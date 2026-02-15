@@ -115,7 +115,6 @@ jobs:
           push: false
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
           
-
       - name: Docker image testing
         run: |
           docker run --name solar-system-app -d \
@@ -131,8 +130,6 @@ jobs:
           echo "Testing image url using wget"
           sleep 5
           wget -q -O - http://127.0.0.1:3000/live || echo "Health check failed"
-
-
 
       - name: Docker push for testing
         uses: docker/build-push-action@v4
