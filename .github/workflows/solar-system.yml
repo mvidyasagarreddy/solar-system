@@ -57,14 +57,7 @@ jobs:
     code-coverage:
       name: Code Coverage
       needs: unit-testing
-      strategy:
-          matrix:
-            nodejsversion: [18,20]
-            operating-system: [ubuntu-latest, macos-latest]
-            exclude:
-              - nodejsversion: 18
-                operating-system: macos-latest
-      runs-on: ${{ matrix.operating-system }}
+      runs-on: ubuntu-latest
       continue-on-error: true
       steps:
       - name: Checkout Repository
@@ -73,7 +66,7 @@ jobs:
       - name: Setup NodeJS Version
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.nodejsversion }}
+          node-version: 18
 
       
       - name: Cache NPM Dependencies
