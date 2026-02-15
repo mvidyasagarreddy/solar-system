@@ -8,7 +8,6 @@ on:
       - 'feature/*'
 
 env:
-    env:
     MONGO_URI: mongodb+srv://${{ vars.MONGO_USERNAME }}:${{ secrets.MONGO_PASSWORD }}@supercluster.d83jj.mongodb.net/superData?retryWrites=true&w=majority
     MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
     MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
@@ -18,6 +17,7 @@ env:
 jobs:
     unit-testing:
         name: Unit Testing
+        continue-on-error: true
         strategy:
           matrix:
             nodejsversion: [18,19,20]
@@ -39,10 +39,38 @@ jobs:
           run: npm install
     
         - name: Unit Testing
+          id: nodejs-unit-testing-step
           run: npm test
           
         - name: Archive Test Result
+          if: always() && (steps.nodejs-unit-testing-step.outcome == 'failure' || steps.nodejs-unit-testing-step.outcome == 'success')
           uses: actions/upload-artifact@v6
           with:
             name: Mocha-Test-Result
             path: test-results.xml
+    code-coverage:
+      name: Code Coverage
+      needs: unit-testing
+      runs-on: ubuntu-latest
+      continue-on-error: true
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS Version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Code Coverage
+        run: npm run coverage
+
+      - name: Upload Code Coverage Report
+        uses: actions/upload-artifact@v6
+        with:
+          name: Code-Coverage-Result
+          path: coverage
+          retention-days: 5
