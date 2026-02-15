@@ -107,7 +107,7 @@ jobs:
         with:
           context:
           push: false
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/solar-system:testing:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
 
       - name: Docker image testing
         run: |
