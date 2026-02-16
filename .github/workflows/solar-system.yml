@@ -253,7 +253,7 @@ jobs:
           curl -s http://$URL/live -s -k | jq -r .status | grep -i live || echo "Integration test failed"
 
     prod-deployment:
-      if: github.ref == 'ref/heads/main'
+      if: github.ref == 'refs/heads/main'
       needs: docker
       runs-on: ubuntu-latest
       environment:
@@ -326,7 +326,7 @@ jobs:
           echo "URL=$URL" >> $GITHUB_OUTPUT
 
     prod-integration-testing:
-      if: github.ref == 'ref/heads/main'
+      if: github.ref == 'refs/heads/main'
       name: Prod Integration Testing
       needs: prod-deployment
       runs-on: ubuntu-latest
