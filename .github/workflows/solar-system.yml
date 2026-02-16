@@ -238,7 +238,7 @@ jobs:
           echo "URL=$URL" >> $GITHUB_OUTPUT
 
     dev-integration-testing:
-      name: Integration Testing
+      name: Dev Integration Testing
       needs: dev-deployment
       runs-on: ubuntu-latest
       steps:
@@ -323,7 +323,7 @@ jobs:
           echo "URL=$URL" >> $GITHUB_OUTPUT
 
     prod-integration-testing:
-      name: Integration Testing
+      name: Prod Integration Testing
       needs: prod-deployment
       runs-on: ubuntu-latest
       steps:
