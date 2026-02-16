@@ -203,10 +203,10 @@ jobs:
 
       - name: Save Nginx ingress controller ip as a github env variable
         run: |
-          echo "INGRESS-IP=$(kubectl -n ingress-nginx get services ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" >> $GITHUB_ENV
+          echo "INGRESS_IP=$(kubectl -n ingress-nginx get services ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" >> $GITHUB_ENV
 
       - name: Replace token in manifest files
-        uses: cschleiden/replace-token-action@v1
+        uses: cschleiden/replace-tokens@v1
         with:
           tokenPrefix: '_{_'
           tokenSuffix: '_}_'
@@ -214,8 +214,9 @@ jobs:
         env:
           NAMESPACE: ${{ vars.NAMESPACE }}
           REPLICAS: ${{ vars.REPLICAS }}
-          IMAGE: ${{ secrets}}
-          INGRESS_IP: ${{ env.INGRESS-IP }}
+          IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
+          INGRESS_IP: ${{ vars.INGRESS_IP }}
+
 
       - name: create mongodb secret in kubernetes
         run: |
